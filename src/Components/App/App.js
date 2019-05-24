@@ -34,6 +34,19 @@ class App extends Component {
     }
   }
 
+  componentDidMount(){
+    const { userLoggedIn } = this.state;
+    if(!userLoggedIn){
+      this.props.history.push('/login')
+    }
+  }
+
+  toggleLoggedIn = () => {
+    this.setState({
+      userLoggedIn: !this.state.userLoggedIn
+    })
+  }
+
   render(){
     return (
       <div>
@@ -47,7 +60,11 @@ class App extends Component {
         />
         <Route 
           path='/login'
-            component={ LoginForm }
+            render={() => {
+              return(
+                <LoginForm client={ chatClient } toggleLoggedIn={ this.toggleLoggedIn } />
+              )
+            }}
         />
       </div>
 
