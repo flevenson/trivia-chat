@@ -10,20 +10,18 @@ import Stream from '../Stream'
 import LoginForm from '../LoginForm'
 
 const chatClient = new StreamChat(process.env.API_KEY || Info.apiKey);
-const userToken = Info.sampleUserToken
+// const userToken = Info.sampleUserToken
 
-chatClient.setUser(
-  {
-    id:'jlahey',
-    name:'Jim Lahey',
-    image: '../../assets/freddiePic.png'
-  },
-  userToken
-)
+// chatClient.setUser(
+//   {
+//     id:'jlahey',
+//     name:'Jim Lahey',
+//     image: '../../assets/freddiePic.png'
+//   },
+//   userToken
+// )
 
-const channel = chatClient.channel('messaging', 'testChannel', {
-  name: 'Test Channel'
-})
+let channel;
 
 class App extends Component {
   
@@ -47,6 +45,12 @@ class App extends Component {
     })
   }
 
+  setChannel = () => {
+    channel = chatClient.channel('messaging', 'testChannel', {
+      name: 'Test Channel'
+    })
+  }
+
   render(){
     return (
       <div>
@@ -62,7 +66,11 @@ class App extends Component {
           path='/login'
             render={() => {
               return(
-                <LoginForm client={ chatClient } toggleLoggedIn={ this.toggleLoggedIn } />
+                <LoginForm 
+                  client={ chatClient } 
+                  toggleLoggedIn={ this.toggleLoggedIn }
+                  setChannel={ this.setChannel }
+                  history={ this.props.history } />
               )
             }}
         />
