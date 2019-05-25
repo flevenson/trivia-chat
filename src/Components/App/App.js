@@ -8,6 +8,7 @@ import { Link, Route, withRouter } from 'react-router-dom';
 import 'stream-chat-react/dist/css/index.css';
 import Stream from '../Stream'
 import LoginForm from '../LoginForm'
+import { faSmile } from '@fortawesome/free-regular-svg-icons';
 
 const chatClient = new StreamChat(process.env.API_KEY || Info.apiKey);
 // const userToken = Info.sampleUserToken
@@ -32,13 +33,6 @@ class App extends Component {
     }
   }
 
-  componentDidMount(){
-    const { userLoggedIn } = this.state;
-    if(!userLoggedIn){
-      this.props.history.push('/login')
-    }
-  }
-
   toggleLoggedIn = () => {
     this.setState({
       userLoggedIn: !this.state.userLoggedIn
@@ -57,13 +51,17 @@ class App extends Component {
         <Route 
           exact path='/'
           render={()=> {
-            return(
-              <Stream client={ chatClient } channel={ channel }/>
-            )
+            if(!this.state.userLoggedIn){
+              this.props.history.push('/login')
+            } else {
+              return(
+                <Stream client={ chatClient } channel={ channel }/>
+              )
+            }
           }}
         />
         <Route 
-          path='/login'
+          exact path='/login'
             render={() => {
               return(
                 <LoginForm 
