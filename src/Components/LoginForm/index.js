@@ -57,13 +57,13 @@ class LoginForm extends Component{
     if( isSigningUp ) {
       const serverSideClient = new StreamChat(Info.apiKey, Info.serverSideToken)
       const token = serverSideClient.createToken(username)
-      this.setState({
-        user_token: token
-      })
+      // this.setState({
+      //   user_token: token
+      // })
       credentials = {
         username,
         password,
-        user_token
+        user_token: token
       }
       await API.signUpUser(credentials)
     }
@@ -72,7 +72,11 @@ class LoginForm extends Component{
       password
     }
     credentials = await API.logInUser(credentials)
+    if(username === 'Jim Lahey'){
     this.props.client.setUser({id: 'jlahey', name: username}, credentials.user_token)
+    } else {
+    this.props.client.setUser({id: username, name: username}, credentials.user_token)
+    } 
     this.props.setChannel()
     this.props.toggleLoggedIn()
     this.props.history.push('/')
