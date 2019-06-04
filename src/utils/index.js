@@ -1,5 +1,6 @@
 export const signUpUser = async (credentials) => {
-  const url = 'https://fe245y6fug.execute-api.us-east-2.amazonaws.com/test-deploy'
+  let url = 'https://fe245y6fug.execute-api.us-east-2.amazonaws.com/prod'
+  debugger
   try {
     const response = await fetch(url, {
       method: 'POST',
@@ -8,15 +9,16 @@ export const signUpUser = async (credentials) => {
     })
     if(!response.ok) {
       throw new Error(response.statusText);
+    } else {
+      return await response.json();
     }
-    return await response.json();
   } catch (error) {
     console.log(error);
   }
 }
 
 export const logInUser = async (credentials) => {
-  const url = 'https://8hngt42kz7.execute-api.us-east-2.amazonaws.com/prod'
+  let url = 'https://8hngt42kz7.execute-api.us-east-2.amazonaws.com/prod'
   try {
     const response = await fetch(url, {
       method: 'POST',

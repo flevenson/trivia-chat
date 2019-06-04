@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import './LoginForm.css'
 import * as API from '../../utils'
+import md5 from 'md5'
 import Info from '../../assets/info'
 import { StreamChat } from 'stream-chat';
+import { dataTransferItemsHaveFiles } from 'react-file-utils';
 
 
 class LoginForm extends Component{
@@ -51,31 +53,50 @@ class LoginForm extends Component{
 
   handleSubmit = async (event) => {
     event.preventDefault();
-    const { isSigningUp, username, password, user_token } = this.state;
+    const { isSigningUp, username, password } = this.state;
     let credentials;
-
+    let token;
     if( isSigningUp ) {
-      const serverSideClient = new StreamChat(Info.apiKey, Info.serverSideToken)
-      const token = serverSideClient.createToken(username)
-      // this.setState({
-      //   user_token: token
-      // })
+      // const serverSideClient = new StreamChat(Info.apiKey, Info.serverSideToken)
+      // const token = serverSideClient.createToken(username)
+      const url = 'https://stream-chat-boilerplate.herokuapp.com/v1/token'
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          body: JSON.stringify({
+            email: username,
+            name: username
+          }),
+          headers: {'Content-Type':'application/json'}
+        })
+        if(!response.ok) {
+          throw new Error(response.statusText);
+        }
+        token = await response.json();
+        token = token.token
+      } catch (error) {
+        console.log(error);
+      }
+
       credentials = {
-        username,
-        password,
+        username: username,
+        password: password,
         user_token: token
       }
-      await API.signUpUser(credentials)
+      console.log(credentials)
+      let thing = await API.signUpUser(credentials)
+      console.log('thing', thing)
     }
     credentials= {
       username,
-      password
+      password,
     }
-    credentials = await API.logInUser(credentials)
+    console.log('credentials', credentials)
+    let login = await API.logInUser(credentials)
     if(username === 'Jim Lahey'){
-    this.props.client.setUser({id: 'jlahey', name: username}, credentials.user_token)
+    await this.props.client.setUser({id: 'jlahey', name: username}, login.user_token)
     } else {
-    this.props.client.setUser({id: username, name: username}, credentials.user_token)
+    await this.props.client.setUser({id: md5(username), name: username}, login.user_token)
     } 
     this.props.setChannel()
     this.props.toggleLoggedIn()
