@@ -93,6 +93,9 @@ class LoginForm extends Component{
     }
     console.log('credentials', credentials)
     let login = await API.logInUser(credentials)
+    if(login === null){
+      document.querySelector('.login-page').append('Username And Password Do Not Match')
+    }
     if(username === 'Jim Lahey'){
     await this.props.client.setUser({id: 'jlahey', name: username}, login.user_token)
     } else {
